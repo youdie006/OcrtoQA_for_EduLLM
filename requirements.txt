@@ -1,0 +1,30 @@
+# OCR and PDF processing
+pytesseract>=0.3.10
+pdf2image>=1.16.3
+opencv-python>=4.8.0
+Pillow>=10.0.0
+
+# MathPix API (optional)
+requests>=2.31.0
+
+# Math and text processing
+sympy>=1.12
+numpy>=1.24.0
+
+# LangChain and LLM
+langchain>=0.1.0
+langchain-community>=0.0.10
+openai>=1.0.0
+
+# NLP and validation
+bert-score>=0.3.13
+transformers>=4.35.0
+torch>=2.0.0
+
+# Utilities
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+
+# System dependencies (install separately):
+# - Tesseract OCR: sudo apt-get install tesseract-ocr tesseract-ocr-eng tesseract-ocr-kor
+# - Poppler (for pdf2image): sudo apt-get install poppler-utils
