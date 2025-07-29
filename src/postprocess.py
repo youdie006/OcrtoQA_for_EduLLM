@@ -7,6 +7,7 @@ Cleans and normalizes OCR output, particularly for mathematical content.
 import re
 from typing import Dict, List, Tuple
 import logging
+from content_filter import ContentFilter
 
 logger = logging.getLogger(__name__)
 
@@ -223,7 +224,7 @@ def clean(text: str, is_latex: bool = False) -> str:
 
 def clean_ocr_output(text: str, latex: str) -> Tuple[str, str]:
     """
-    Clean both text and LaTeX OCR output.
+    Clean both text and LaTeX OCR output with content filtering.
     
     Args:
         text: Raw text from OCR
@@ -233,7 +234,9 @@ def clean_ocr_output(text: str, latex: str) -> Tuple[str, str]:
         Tuple of (cleaned_text, cleaned_latex)
     """
     cleaner = OCRCleaner()
+    content_filter = ContentFilter()
     
+    # First clean the text
     cleaned_text = cleaner.clean(text, is_latex=False)
     cleaned_latex = cleaner.clean(latex, is_latex=True)
     
@@ -242,6 +245,18 @@ def clean_ocr_output(text: str, latex: str) -> Tuple[str, str]:
         equations = cleaner.extract_equations(cleaned_text)
         if equations:
             cleaned_latex = '\n'.join(equations)
+    
+    # Apply content filtering to remove non-mathematical content
+    if cleaned_text:
+        # Split into paragraphs and filter
+        paragraphs = cleaned_text.split('\n\n')
+        filtered_paragraphs = []
+        
+        for para in paragraphs:
+            if content_filter.classify_content(para) != 'noise':
+                filtered_paragraphs.append(para)
+        
+        cleaned_text = '\n\n'.join(filtered_paragraphs)
     
     return cleaned_text, cleaned_latex
 

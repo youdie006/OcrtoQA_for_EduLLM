@@ -11,6 +11,7 @@ __author__ = "OCR-QA Pipeline Team"
 from .ingestion import get_pdfs_to_process
 from .ocr import run_ocr
 from .postprocess import clean
+from .content_filter import filter_content
 from .qa_chain import make_qa
 from .validator import validate
 from .pipeline import OCRQAPipeline
@@ -19,6 +20,7 @@ __all__ = [
     "get_pdfs_to_process",
     "run_ocr",
     "clean",
+    "filter_content",
     "make_qa",
     "validate",
     "OCRQAPipeline"

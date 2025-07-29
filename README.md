@@ -6,6 +6,8 @@ A complete pipeline for converting mathematical textbooks and problem books (PDF
 
 - **100% Local Processing**: No cloud uploads required
 - **Math-Focused OCR**: Tesseract for text + MathPix API for LaTeX formulas
+- **Smart Content Filtering**: Automatically removes non-mathematical content (headers, footers, etc.)
+- **GPT-4o Powered**: Uses latest GPT-4o model for high-quality QA generation
 - **Intelligent QA Generation**: LangChain-powered question-answer pair creation
 - **Rigorous Validation**: SymPy for mathematical correctness + BERTScore (>0.80) for quality
 - **JSONL Output**: Stream-friendly format for large datasets
@@ -15,8 +17,8 @@ A complete pipeline for converting mathematical textbooks and problem books (PDF
 ```
 raw_pdfs/*.pdf
     └──➤ ocr.py              # Tesseract (text) + MathPix (LaTeX)
-            └──➤ postprocess.py     # OCR-error cleanup, symbol normalization
-                    └──➤ qa_chain.py       # LangChain map-reduce → QA list
+            └──➤ postprocess.py     # OCR cleanup + content filtering
+                    └──➤ qa_chain.py       # GPT-4o powered QA generation
                             └──➤ validator.py      # SymPy.equals & BERTScore filter
                                     └──➤ processed/qa/*.jsonl   # final dataset
 ```
@@ -88,7 +90,8 @@ OcrtoQA_for_EduLLM/
 │   ├── ingestion.py        # PDF scanning and validation
 │   ├── ocr.py              # OCR processing (Tesseract + MathPix)
 │   ├── postprocess.py      # OCR cleanup and normalization
-│   ├── qa_chain.py         # QA generation with LangChain
+│   ├── content_filter.py   # Smart filtering of non-math content
+│   ├── qa_chain.py         # QA generation with GPT-4o
 │   ├── validator.py        # Mathematical and quality validation
 │   └── pipeline.py         # Main orchestrator
 ├── requirements.txt
@@ -99,7 +102,8 @@ OcrtoQA_for_EduLLM/
 ## 🛠️ Technical Stack
 
 - **OCR**: Tesseract 5 (eng+kor+equ), MathPix API
-- **LLM**: OpenAI GPT models via LangChain
+- **LLM**: OpenAI GPT-4o via LangChain
+- **Content Filtering**: Smart math content detection and noise removal
 - **Validation**: SymPy (mathematical), BERTScore (quality)
 - **ML**: Transformers, PyTorch
 - **Processing**: OpenCV, pdf2image
@@ -145,7 +149,7 @@ docker run -v $(pwd)/data:/app/data \
 ### Pipeline Parameters
 
 Edit in `pipeline.py` or pass via CLI:
-- `model_name`: LLM model (default: "gpt-3.5-turbo")
+- `model_name`: LLM model (default: "gpt-4o")
 - `bert_threshold`: Quality threshold (default: 0.80)
 - `chunk_size`: Text chunk size for processing (default: 2000)
 

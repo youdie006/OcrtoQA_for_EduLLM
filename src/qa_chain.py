@@ -13,6 +13,7 @@ from langchain.chains import LLMChain
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import json
 from dotenv import load_dotenv
+from content_filter import ContentFilter
 
 # Load environment variables
 load_dotenv()
@@ -23,7 +24,7 @@ logger = logging.getLogger(__name__)
 class QAGenerator:
     """Generates QA pairs from mathematical text using LangChain."""
     
-    def __init__(self, model_name: str = "gpt-3.5-turbo", temperature: float = 0.2):
+    def __init__(self, model_name: str = "gpt-4o", temperature: float = 0.2):
         """
         Initialize QA generator.
         
@@ -44,6 +45,9 @@ class QAGenerator:
             temperature=temperature,
             openai_api_key=api_key
         )
+        
+        # Initialize content filter
+        self.content_filter = ContentFilter()
         
         # Create prompts
         self.qa_prompt = PromptTemplate(
@@ -100,7 +104,7 @@ Summary:"""
     
     def split_text(self, text: str, chunk_size: int = 2000) -> List[str]:
         """
-        Split text into manageable chunks.
+        Split text into manageable chunks with content filtering.
         
         Args:
             text: Input text
@@ -109,14 +113,10 @@ Summary:"""
         Returns:
             List of text chunks
         """
-        splitter = RecursiveCharacterTextSplitter(
-            chunk_size=chunk_size,
-            chunk_overlap=200,
-            separators=["\n\n", "\n", ". ", " ", ""]
-        )
+        # Use smart splitting from content filter
+        chunks = self.content_filter.smart_split(text, max_chunk_size=chunk_size)
         
-        chunks = splitter.split_text(text)
-        logger.info(f"Split text into {len(chunks)} chunks")
+        logger.info(f"Split and filtered text into {len(chunks)} mathematical chunks")
         return chunks
     
     def generate_qa_for_chunk(self, text_chunk: str, latex_chunk: str = "") -> List[Dict]:
@@ -216,7 +216,7 @@ Summary:"""
         return unique_pairs
 
 
-def make_qa(text: str, latex: str = "", model_name: str = "gpt-3.5-turbo") -> List[Dict]:
+def make_qa(text: str, latex: str = "", model_name: str = "gpt-4o") -> List[Dict]:
     """
     Convenience function to generate QA pairs.
     

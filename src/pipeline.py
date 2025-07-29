@@ -25,7 +25,7 @@ class OCRQAPipeline:
     
     def __init__(self, 
                  output_dir: Path = None,
-                 model_name: str = "gpt-3.5-turbo",
+                 model_name: str = "gpt-4o",
                  bert_threshold: float = 0.80,
                  save_intermediate: bool = False):
         """
@@ -251,8 +251,8 @@ def main():
     )
     parser.add_argument(
         '--model',
-        default='gpt-3.5-turbo',
-        help='LLM model for QA generation'
+        default='gpt-4o',
+        help='LLM model for QA generation (default: gpt-4o)'
     )
     parser.add_argument(
         '--bert-threshold',
